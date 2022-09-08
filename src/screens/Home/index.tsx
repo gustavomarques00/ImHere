@@ -4,43 +4,42 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
-  Alert
+  Alert,
 } from "react-native";
+import React, { useState } from "react";
 import { Participant } from "../../components/Participant";
 import { styles } from "./styles";
 
 export function Home() {
-  const participants = [
-    "Gustavo",
-    "Gabriel",
-    "João",
-    "Matheus",
-    "Ana",
-    "Bia",
-    "Giovana",
-    "Pedro",
-    "Mama",
-    "Mem",
-  ];
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [participantName, setParticipantName] = useState("");
 
   function handleParticipantAdd() {
-    if (participants.includes("Gustavo")){
-      return Alert.alert("Participante existe", "Já existe um participante na lista com esse nome")
+    if (participants.includes(participantName)) {
+      return Alert.alert(
+        "Participante existe",
+        "Já existe um participante na lista com esse nome!"
+      );
     }
-    console.log("entrei");
+
+    setParticipants((prevState) => [...prevState, participantName]);
+    setParticipantName("");
   }
 
   function handleParticipantRemove(name: string) {
     Alert.alert("Remover", `Remover o participante ${name}?`, [
       {
-        text: 'Sim',
-        onPress: () => Alert.alert("Deletado")
+        text: "Sim",
+        onPress: () =>
+          setParticipants((prevState) =>
+            prevState.filter((participant) => participant !== name)
+          ),
       },
       {
         text: "Não",
-        style: "cancel"
-      }
-    ])
+        style: "cancel",
+      },
+    ]);
     console.log(`Você removeu o ${name}`);
   }
 
@@ -54,6 +53,8 @@ export function Home() {
           style={styles.input}
           placeholder='Nome do participante'
           placeholderTextColor='#6b6b6b'
+          onChangeText={setParticipantName}
+          value={participantName}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleParticipantAdd}>
@@ -74,10 +75,11 @@ export function Home() {
         )}
         ListEmptyComponent={() => (
           <Text style={styles.listEmptyText}>
-            Ninguém chegou no evento ainda? Adicione participantes a sua lista de presença.
+            Ninguém chegou no evento ainda? Adicione participantes a sua lista
+            de presença.
           </Text>
         )}
       />
     </View>
-  );
+  )
 }
